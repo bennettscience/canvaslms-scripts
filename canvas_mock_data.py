@@ -158,7 +158,6 @@ def generate_assignments(course_id, min_assignments=5, max_assignments=10):
         return list(online | offline)
 
     course = canvas.get_course(course_id)
-
     num_assignments = fake.random_int(min_assignments, max_assignments)
 
     for i in range(num_assignments):
@@ -169,3 +168,61 @@ def generate_assignments(course_id, min_assignments=5, max_assignments=10):
             'description': fake.text(max_nb_chars=fake.random_int(100, 500)),
             'published': fake.boolean(75)
         })
+
+
+def generate_discussions(course_id, min_discussions=3, max_discussions=7):
+    """
+    Create discussion topics in a course.
+
+    :param course_id: The Canvas Course to create discussions in.
+    :type course_id: int
+    :param min_discussions: The minimum number of discussions to create.
+    :type min_discussions: int
+    :param max_discussions: The maximum number of discussions to create.
+    :type max_discussions: int
+    """
+    course = canvas.get_course(course_id)
+    num_discussions = fake.random_int(min_discussions, max_discussions)
+
+    for i in range(num_discussions):
+        course.create_discussion_topic(
+            title=fake.bs().title(),
+            message=fake.text(max_nb_chars=fake.random_int(100, 500)),
+            published=True
+        )
+
+
+def generate_discussion_entries(course_id, chance_to_skip=25, students_only=True):
+    """
+    Create several entries in all Discussion Topics by various users in
+    the course.
+
+    :param course_id: The Canvas Course to add entries to
+    :type course_id: int
+    :param chance_to_skip: Percent chance (between 0 and 100, inclusive)
+        to not create a particular entry for a user. Makes response
+        patterns look more realistic.
+    :type chance_to_skip: int
+    :param students_only: Only create entries from students. Otherwise,
+        allow non-student replies. Defaults to "True".
+    :type students_only: bool
+    """
+    course = canvas.get_course(course_id)
+
+    if students_only:
+        users = course.get_users(enrollment_type=['student'])
+    else:
+        users = course.get_users()
+
+    # Have each user make one reply
+    for user in users:
+        # Reply to each discussion
+        for discussion in course.get_discussion_topics():
+            # Sometimes don't post based on chance to skip
+            if fake.boolean(100 - chance_to_skip):
+                paragraphs = fake.paragraphs(nb=fake.random_int(2, 5))
+                paragraphs = ['<p>{}</p>'.format(p) for p in paragraphs]
+                discussion.post_entry(
+                    message='\n'.join(paragraphs),
+                    as_user_id=user.id
+                )
