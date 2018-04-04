@@ -98,6 +98,16 @@ def generate_enrollments(account_id, min_students=1, max_students=5):
 
 
 def generate_quizzes(course_id, min_quizzes=1, max_quizzes=5):
+    """
+    Create randomized quizzes in a course.
+
+    :param course_id: The Canvas Course to create quizzes in.
+    :type course_id: int
+    :param min_quizzes: The minimum number of quizzes to create.
+    :type min_quizzes: int
+    :param max_quizzes: The maximum number of quizzes to create.
+    :type max_quizzes: int
+    """
     course = canvas.get_course(course_id)
     num_quizzes = fake.random_int(min_quizzes, max_quizzes)
 
@@ -114,3 +124,48 @@ def generate_quizzes(course_id, min_quizzes=1, max_quizzes=5):
         })
 
     # TODO: add quiz questions
+
+
+def generate_assignments(course_id, min_assignments=5, max_assignments=10):
+    """
+    Create randomized assignments in a course.
+
+    :param course_id: The Canvas Course to create assignments in.
+    :type course_id: int
+    :param min_assignments: The minimum number of assignments to create.
+    :type min_assignments: int
+    :param max_assignments: The maximum number of assignments to create.
+    :type max_assignments: int
+    """
+    def get_sub_types():
+        """
+        Return a list of valid sub types.
+
+        :rtype: list
+        """
+        ASSIGN_SUB_TYPES = {
+            'online': ['online_upload', 'online_text_entry', 'online_url'],
+            'offline': ['online_quiz', 'none', 'on_paper', 'discussion_topic', 'external_tool']
+        }
+
+        if fake.boolean(25):  # 25% chance of being offline only
+            # if not online, allow only one type of submission from the offline group
+            return [fake.random_element(ASSIGN_SUB_TYPES['offline'])]
+
+        # if online, pick at least one online (and possibly some offline) sub types
+        online = fake.random_sample(ASSIGN_SUB_TYPES['online'], fake.random_int(1, 3))
+        offline = fake.random_sample(ASSIGN_SUB_TYPES['offline'], fake.random_int(0, 3))
+        return list(online | offline)
+
+    course = canvas.get_course(course_id)
+
+    num_assignments = fake.random_int(min_assignments, max_assignments)
+
+    for i in range(num_assignments):
+        submission_types = get_sub_types()
+        course.create_assignment(assignment={
+            'name': fake.bs().title(),
+            'submission_types': submission_types,
+            'description': fake.text(max_nb_chars=fake.random_int(100, 500)),
+            'published': fake.boolean(75)
+        })
