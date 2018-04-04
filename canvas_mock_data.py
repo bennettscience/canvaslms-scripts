@@ -1,3 +1,5 @@
+from __future__ import print_function, unicode_literals
+
 from faker import Faker
 from canvasapi import Canvas
 
@@ -93,3 +95,22 @@ def generate_enrollments(account_id, min_students=1, max_students=5):
             already_enrolled.append(enroll_user.id)
 
         # TODO: Add support for enrolling Teachers/ TAs
+
+
+def generate_quizzes(course_id, min_quizzes=1, max_quizzes=5):
+    course = canvas.get_course(course_id)
+    num_quizzes = fake.random_int(min_quizzes, max_quizzes)
+
+    QUIZ_TYPES = ['practice_quiz', 'assignment', 'graded_survey', 'survey']
+
+    for i in range(num_quizzes):
+        course.create_quiz(quiz={
+            'title': fake.bs().title(),
+            'description': fake.text(max_nb_chars=fake.random_int(100, 500)),
+            'quiz_type': fake.random_element(QUIZ_TYPES),
+            'time_limit': fake.random_int(1, 30) * 5 if fake.boolean(50) else None,
+            'published': fake.boolean(75),
+            'allowed_attempts': fake.random_int(1, 3) if fake.boolean(75) else -1
+        })
+
+    # TODO: add quiz questions
