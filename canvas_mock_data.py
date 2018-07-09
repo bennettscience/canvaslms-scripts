@@ -97,6 +97,24 @@ def generate_enrollments(account_id, min_students=1, max_students=5):
         # TODO: Add support for enrolling Teachers/ TAs
 
 
+def generate_groups(course_id, num_groups=3):
+    """
+    Sort users into groups.
+
+    :param course_id: The Canvas Course to create groups in.
+    :type course_id: int
+    :param num_groups: The number of groups to create
+    :type num_groups: int
+    """
+    course = canvas.get_course(course_id)
+
+    group_category = course.create_group_category(
+        name='User Groups',
+        create_group_count=num_groups
+    )
+    group_category.assign_members()
+
+
 def generate_quizzes(course_id, min_quizzes=1, max_quizzes=5):
     """
     Create randomized quizzes in a course.
