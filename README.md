@@ -84,3 +84,9 @@ Useful if you need throwaway accounts for demonstrations or testing.
 Because dummy students don't have emails, they can't accept course invitations.
 This script will enroll students (users) into any course without sending a
 confirmation or requiring them to accept an invitation.
+
+#### score_all_submissions
+
+This will fill in a score for an assignment if a submission is present. This is
+helpful if you want to give credit for completion without having to load the
+gradebook or go through the SpeedGrader.
