@@ -86,6 +86,11 @@ Calculate the average score in a course or a section.
 Quickly create several test students without linking them to an email address.
 Useful if you need throwaway accounts for demonstrations or testing.
 
+#### missing_assignments
+
+Within a course, create a CSV report for all students and assignments marked as
+`missing` or `unsubmitted`.
+
 #### quick_enroll_no_confirm
 
 Because dummy students don't have emails, they can't accept course invitations.
