@@ -6,7 +6,7 @@ canvas = Canvas(PROD_URL, PROD_KEY)
 course = canvas.get_course(12345)
 # specify sections if you want to
 # wrap the enrollment object in a loop for eac section
-# sections = [59592, 59600, 59611] 
+# sections = [59592, 59600, 59611]
 
 enrollment = {
     "notify": False,
