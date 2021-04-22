@@ -12,6 +12,13 @@ install `canvasapi` and dependencies. You should do this is a virtual
 environment, if possible. Type annotations are Python 3.7+, but scripts _should_
 work in 3.6+. The `canvasapi` library is 3.6+ only.
 
+### Set up Canvas URLs and Keys
+
+Make a copy of `config.example.py` and set your institution's URL and API keys.
+You can import the URL/key pair you want for each script rather than hard-coding
+them in each file. This also makes it easier to invalidate keys that are
+accidentally exposed.
+
 ## Contributions
 
 `pip install -r requirements-dev.txt` to install development packages. `mypy`,
